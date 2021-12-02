@@ -1,0 +1,49 @@
+{% extends "todo/base.html" %}
+
+{% block content %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            {% if todos %}
+                 <h1>{{ todos.count }} Current Task{{ todos.count|pluralize }}</h1>
+            {% else %}
+                           <h1>Current Tasks</h1>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row justify-content-left mt-5">
+        <div class="col-md-10">
+        {% if todos %}
+            <ol class="list-group list-group-numbered">
+                <ol class="list-group list-group-numbered">
+                {% for todo in todos %}
+
+                    <li class="list-group-item"><a href="{% url 'viewtodo' todo.id %}" class="list-group-item list-group-item-action{% if todo.important %} list-group-item-danger{% endif %}"><b>{{ todo.title }}</b>{% if todo.memo %} - {{ todo.memo|truncatechars:30 }}{% endif %}</a></li>
+
+                    <div class="row justify-content mt-auto">
+                        <div class="d-block mr-0 ml-auto">
+                            <form method="POST" action="{% url 'completetodo' todo.id %}">
+                                {% csrf_token %}
+                                <button id="complete" class="btn btn-success" type="submit">Complete</button>
+                            </form>
+                        </div>
+                        <div class="d-block mr-3 ml-auto">
+                            <form method="POST" action="{% url 'deletetodo' todo.id %}">
+                                {% csrf_token %}
+                                <button id="delete" class="btn btn-danger" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </ol>
+            </div>
+        {% else %}
+            <div class="text-center">
+                <h2>Nothing Pending for you. Relax!!!</h2>
+            <br>
+            <a role="button" class="btn btn-primary" href="{% url 'createtodo' %}">New Todo</a>
+            </div>
+        {% endif %}
+        </div>
+    </div>
+{% endblock %}
